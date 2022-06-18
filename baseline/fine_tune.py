@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # Revise
     model.dev_data = dev_data
 
-    trainer = train_model(model=model, out_dir=out_dir_path, epochs=sg.epochs)
+    trainer = train_model(model=model, out_dir=out_dir_path, epochs=sg.epochs, grad_accum=sg.accum_grad_batches)
 
     # use pytorch lightnings saver here.
     out_model_path = save_model(trainer=trainer, out_dir=out_dir_path, model_name=sg.model_name, timestamp=timestamp)
