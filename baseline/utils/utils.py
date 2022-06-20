@@ -86,7 +86,6 @@ def create_model(train_data, dev_data, tag_to_id, batch_size=64, dropout_rate=0.
 
 
 def load_model(model_file, tag_to_id=None, stage='test'):
-    import pdb; pdb.set_trace()
     if ~os.path.isfile(model_file):
         model_file = get_models_for_evaluation(model_file)
     hparams_file = model_file[:model_file.rindex('checkpoints/')] + '/hparams.yaml'
@@ -120,7 +119,7 @@ def get_trainer(gpus=4, is_test=False, out_dir=None, epochs=10, grad_accum=1):
     if is_test:
         return pl.Trainer(gpus=1, logger=logger) if torch.cuda.is_available() else pl.Trainer(val_check_interval=100)
 
-    if torch.cuda.is_available() and False:
+    if torch.cuda.is_available():
         trainer = pl.Trainer(gpus=gpus, logger=logger, deterministic=True, max_epochs=epochs, callbacks=[get_model_earlystopping_callback(),],
                              default_root_dir=out_dir, distributed_backend='ddp', checkpoint_callback=False, accumulate_grad_batches=grad_accum)
         trainer.callbacks.append(get_lr_logger())
