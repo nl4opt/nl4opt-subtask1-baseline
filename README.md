@@ -2,7 +2,7 @@
 
 Subtask-1 (NER) Baseline Tutorial
 
-This pretrained baseline transformer model is adapted from a [popular NER competition](https://multiconer.github.io/) that leverages XLM-RoBERTa-base model.
+This repo is adapted from the [baseline repo](https://github.com/amzn/multiconer-baseline/) used by the [MultiCoNER competition](https://multiconer.github.io/). The baseline model is built upon the XLM-RoBERTa-base CRF model. 
 
 
 ## Setting up the code environment
