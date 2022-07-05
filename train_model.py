@@ -1,6 +1,6 @@
 import time
 
-from utils.utils import get_reader, train_model, create_model, save_model, parse_args, get_tagset
+from utils.utils import get_reader, train_model, create_model, parse_args, get_tagset
 
 if __name__ == '__main__':
     timestamp = time.time()
@@ -15,9 +15,5 @@ if __name__ == '__main__':
                          dropout_rate=sg.dropout, batch_size=sg.batch_size, stage=sg.stage, lr=sg.lr,
                          encoder_model=sg.encoder_model, num_gpus=sg.gpus)
 
-    trainer = train_model(model=model, out_dir=out_dir_path, epochs=sg.epochs, grad_accum=sg.accum_grad_batches)
-
-    # use pytorch lightnings saver here.
-    out_model_path = save_model(trainer=trainer, out_dir=out_dir_path, model_name=sg.model_name, timestamp=timestamp)
-
-    
+    trainer = train_model(model=model, out_dir=out_dir_path, epochs=sg.epochs, model_name=sg.model_name, timestamp=timestamp, grad_accum=sg.accum_grad_batches)
+ 

@@ -7,7 +7,7 @@ import torch
 from pytorch_lightning import seed_everything
 
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
 from log import logger
 from model.ner_model import NERBaseAnnotator
@@ -48,6 +48,7 @@ def get_tagset(tagging_scheme):
     if 'conll' in tagging_scheme:
         return conll_iob
     else:
+        # If you choose to use a different tagging scheme, you may need to do some post-processing
         raise Exception("ERROR: Only conll tagging scheme is accepted")
 
 
@@ -88,13 +89,14 @@ def create_model(train_data, dev_data, tag_to_id, batch_size=64, dropout_rate=0.
 def load_model(model_file, tag_to_id=None, stage='test'):
     if ~os.path.isfile(model_file):
         model_file = get_models_for_evaluation(model_file)
+
     hparams_file = model_file[:model_file.rindex('checkpoints/')] + '/hparams.yaml'
     model = NERBaseAnnotator.load_from_checkpoint(model_file, hparams_file=hparams_file, stage=stage, tag_to_id=tag_to_id)
     model.stage = stage
     return model, model_file
 
 
-def save_model(trainer, out_dir, model_name='', timestamp=None):
+def save_model(trainer, out_dir, model_name, timestamp=None):
     out_dir = out_dir + '/lightning_logs/version_' + str(trainer.logger.version) + '/checkpoints/'
     if timestamp is None:
         timestamp = time.time()
@@ -107,21 +109,38 @@ def save_model(trainer, out_dir, model_name='', timestamp=None):
     return outfile
 
 
-def train_model(model, out_dir='', epochs=10, gpus=1, grad_accum=1):
-    trainer = get_trainer(gpus=gpus, out_dir=out_dir, epochs=epochs, grad_accum=grad_accum)
+def train_model(model, out_dir='', epochs=10, gpus=1, model_name='', timestamp='', grad_accum=1):
+    trainer = get_trainer(gpus=gpus, out_dir=out_dir, epochs=epochs, model_name=model_name, timestamp=timestamp, grad_accum=grad_accum)
     trainer.fit(model)
     return trainer
 
 
-def get_trainer(gpus=4, is_test=False, out_dir=None, epochs=10, grad_accum=1):
+def get_modelcheckpoint_callback(out_dir, model_name, timestamp):
+    if not os.path.exists(out_dir + '/lightning_logs/'):
+        os.makedirs(out_dir + '/lightning_logs/')
+
+    if len(os.listdir(out_dir + '/lightning_logs/')) < 1:
+        bcp_path  = out_dir + '/lightning_logs/version_0/checkpoints/'
+    else:
+        bcp_path  = out_dir + '/lightning_logs/version_' +  str(int(os.listdir(out_dir + '/lightning_logs/')[-1].split('_')[-1]) + 1) + '/checkpoints/'
+       
+    checkpoint_callback = ModelCheckpoint(
+        monitor='val_loss',
+        dirpath=bcp_path,
+        filename=model_name + '_timestamp_' + str(timestamp) + '_final'
+    )
+    return checkpoint_callback
+
+
+def get_trainer(gpus=4, is_test=False, out_dir=None, epochs=10, model_name='', timestamp='', grad_accum=1):
     seed_everything(42)
     logger = pl.loggers.CSVLogger(out_dir, name="lightning_logs")
     if is_test:
         return pl.Trainer(gpus=1, logger=logger) if torch.cuda.is_available() else pl.Trainer(val_check_interval=100)
 
     if torch.cuda.is_available():
-        trainer = pl.Trainer(gpus=gpus, logger=logger, deterministic=True, max_epochs=epochs, callbacks=[get_model_earlystopping_callback(),],
-                             default_root_dir=out_dir, distributed_backend='ddp', checkpoint_callback=False, accumulate_grad_batches=grad_accum)
+        trainer = pl.Trainer(gpus=gpus, logger=logger, deterministic=True, max_epochs=epochs, callbacks=[get_model_earlystopping_callback(),get_modelcheckpoint_callback(out_dir, model_name, timestamp)],
+                             default_root_dir=out_dir, distributed_backend='ddp', checkpoint_callback=True, accumulate_grad_batches=grad_accum)
         trainer.callbacks.append(get_lr_logger())
     else:
         trainer = pl.Trainer(max_epochs=epochs, logger=logger, default_root_dir=out_dir)

@@ -56,6 +56,7 @@ class NERBaseAnnotator(pl.LightningModule):
         self.lr = lr
         self.dropout = nn.Dropout(dropout_rate)
 
+        # SpanF1 is required to evaluate the model - don't remove
         self.span_f1 = SpanF1()
         self.setup_model(self.stage)
         self.save_hyperparameters('pad_token_id', 'encoder_model')

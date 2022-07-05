@@ -2,8 +2,7 @@
 
 Subtask-1 (NER) Baseline Tutorial
 
-This repo is adapted from the [baseline repo](https://github.com/amzn/multiconer-baseline/) used by the [MultiCoNER competition](https://multiconer.github.io/). The baseline model is built upon the XLM-RoBERTa-base CRF model. 
-
+This pretrained baseline transformer model is adapted from a [popular NER competition](https://multiconer.github.io/) that leverages the XLM-RoBERTa-base model.
 
 ## Setting up the code environment
 
@@ -32,7 +31,9 @@ This code repository provides you with baseline approach for Named Entity Recogn
 Please see below for a more detailed description on how to use this code is provided.
 
 ### Arguments:
+
 The arguments are as follows:
+
 - `--train` points to the path of the training data. In the case of the baseline model, this would be ../data/train/train.txt
 - `--dev` points to the path of the training data. In the case of the baseline model, this would be ../data/dev/dev.txt
 - `--out_dir` points to the path to save the output files.
@@ -61,7 +62,7 @@ p.add_argument('--out_dir', type=str, help='Output directory.', default='.')
 p.add_argument('--iob_tagging', type=str, help='IOB tagging scheme', default='conll')
 
 p.add_argument('--max_instances', type=int, help='Maximum number of instances', default=1500)
-p.add_argument('--max_length', type=int, help='Maximum number of tokens per instance.', default=100)
+p.add_argument('--max_length', type=int, help='Maximum number of tokens per instance.', default=200)
 
 p.add_argument('--encoder_model', type=str, help='Pretrained encoder model to use', default='xlm-roberta-large')
 p.add_argument('--model', type=str, help='Model path.', default=None)
@@ -69,14 +70,14 @@ p.add_argument('--model_name', type=str, help='Model name.', default=None)
 p.add_argument('--stage', type=str, help='Training stage', default='fit')
 p.add_argument('--prefix', type=str, help='Prefix for storing evaluation files.', default='test')
 
-p.add_argument('--batch_size', type=int, help='Batch size.', default=128)
+p.add_argument('--batch_size', type=int, help='Batch size.', default=64)
 p.add_argument('--accum_grad_batches', type=int, help='Number of batches for accumulating gradients.', default=1)
 p.add_argument('--gpus', type=int, help='Number of GPUs.', default=1)
 p.add_argument('--cuda', type=str, help='Cuda Device', default='cuda:0')
 p.add_argument('--epochs', type=int, help='Number of epochs for training.', default=5)
 p.add_argument('--lr', type=float, help='Learning rate', default=1e-5)
 p.add_argument('--dropout', type=float, help='Dropout rate', default=0.1)
-``` 
+```
 
 ## Train and evaluate the model
 
@@ -90,24 +91,23 @@ There are many approaches to training a neural network. However, the baseline fr
 
 ### Fine-tuning the model
 
-`python fine_tune.py --train ../data/train/train.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 15 --encoder_model xlm-roberta-base --batch_size 64 --lr 0.0001 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_0`
+`python fine_tune.py --train ../data/train/train.txt --dev ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 30 --encoder_model xlm-roberta-base --batch_size 64 --lr 0.0001 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_0`
 
 ### Evaluating the model on the dev set
 
-`python evaluate.py --test ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 64 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
-
+`python evaluate.py --test ../data/test/20220629-test.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 64 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
 
 ## Results
 
-The model was evaluated on the reserved three new domains (production, science, and transportation) which are not represented in the released train or dev dataset (see rows 1-3 below). It was then also evaluated on 50 reserved samples from the same domain as those released to the participants ("Original Domains" below). Finally, the model was evaluated on the entire test set made up of all reserved sampled described above ("Entire Test Set" below) on which it achieved a micro-averaged F1 score of 0.8126. The leaderboard and final standings will only consider the micro-averaged F1 score (right-most column) of the submitted models on the entire test set. This model achieved the following F1 scores:
+The model was evaluated on the reserved three new domains (production, science, and transportation) which are not represented in the released train or dev dataset (see rows 1-3 below). It was then also evaluated on reserved samples from the same domain as those released to the participants ("Original Domains" below). Finally, the model was evaluated on the entire test set made up of all reserved sampled described above ("Entire Test Set" below) on which it achieved a **micro-averaged F1 score of 0.839**. The leaderboard and final standings will only consider the micro-averaged F1 score (right-most column) of the submitted models on the entire test set. This model achieved the following F1 scores:
 |                                | CONST<br/>DIR | LIMIT  | OBJ<br/>DIR | OBJ<br/>NAME | PARAM  | VAR    | MICRO<br/>AVG |
 | ------------------------------ | ------------- | ------ | ----------- | ------------ | ------ | ------ | ------------- |
-| **Production<br>(n=49)**       | 0.8205        | 0.9262 | 1.000       | 0.2295       | 0.9567 | 0.7122 | 0.8068        |
-| **Science<br>(n=50)**          | 0.8759        | 0.8992 | 0.6667      | 0.000        | 0.8249 | 0.7881 | 0.7890        |
-| **Transportation<br>(n=50)**   | 0.8083        | 0.8757 | 0.7619      | 0.0899       | 0.9034 | 0.7881 | 0.7849        |
-| **Original Domains<br>(n=50)** | 0.8764        | 0.8808 | 0.8571      | 0.8286       | 0.9215 | 0.8270 | 0.8659        |
-| **Entire Test Set<br>(n=199)** | 0.8411        | 0.8933 | 0.8679      | 0.4947       | 0.9012 | 0.7792 | 0.8126*       |
-*\* Value that will be reported on the leaderboards page and used for the final evaluation when determining the winners.*
+| **Source Domain<br>**       | 0.816        | 0.943 | 0.800       | 0.884       | 0.949 | 0.895 | 0.905        |
+| **Target Domain<br>** | 0.852        | 0.917 | 0.877      | 0.077       | 0.906 | 0.840 | 0.815        |
+| **Entire Test Set<br>** | 0.842        | 0.925 | 0.866      | 0.351       | 0.918 | 0.854 | 0.839*       |
 
-## License 
+\* Value that will be reported on the leaderboards page and used for the final evaluation when determining the winners.
+
+## License
+
 The code under this repository is licensed under the Apache 2.0 License found in this repository.

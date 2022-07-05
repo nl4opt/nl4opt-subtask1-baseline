@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Set
 from overrides import overrides
-
 from allennlp.training.metrics.metric import Metric
 
 
 class SpanF1(Metric):
+    ''' This class is used to extract the F1 score and is required for the evaluation. Do not change this - we will use our own SpanF1 class for evaluation '''
     def __init__(self, non_entity_labels=['O']) -> None:
         self._num_gold_mentions = 0
         self._num_recalled_mentions = 0
@@ -15,7 +15,7 @@ class SpanF1(Metric):
 
     @overrides
     def __call__(self, batched_predicted_spans, batched_gold_spans, sentences=None):
-        non_entity_labels = self.non_entity_labels
+        non_entity_labels = self.non_entity_labels        
 
         for predicted_spans, gold_spans in zip(batched_predicted_spans, batched_gold_spans):
             gold_spans_set = set([x for x, y in gold_spans.items() if y not in non_entity_labels])
@@ -32,11 +32,13 @@ class SpanF1(Metric):
             for ky, val in predicted_spans.items():
                 if val in non_entity_labels:
                     continue
+                
                 if ky in gold_spans and val == gold_spans[ky]:
+                    
                     self._TP[val] += 1
                 else:
                     self._FP[val] += 1
-
+                
     @overrides
     def get_metric(self, reset: bool = False) -> float:
         # Look @ Multiconer website for tutorial for eval -> get more information
