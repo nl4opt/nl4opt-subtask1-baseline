@@ -112,3 +112,19 @@ The model was evaluated on researved samples from the same domain as those relea
 ## License
 
 The code under this repository is licensed under the Apache 2.0 License found in this repository.
+
+
+
+# Extending and Modifying the Code
+
+You are permitted to modify the model code and training code. However, when running inference on your trained model, you must provide an `evaluate.py` file that reads in your model, the path of the test data (that we will specify), and runs inference - calling `./utils/metric.py`. **More details and updated evaluation scripts will be released before July 15th.** The file `./utils/metric.py` may not be altered - we will verify this throughout the competition and for all winning teams. 
+
+You will also need to submit the environment file that you use so we can run your code. If you are extending the baseline code and need other Python libraries or different versions, please update the `requirements.txt` by exporting your environment with `pip freeze > requirements.txt`.
+
+# Submission Guidelines
+
+Each participating team is required to include the following in their submission folder.
+
+1. The training and evaluation code
+2. The trained model checkpoint
+3. The pip environment file requirements.txt.
