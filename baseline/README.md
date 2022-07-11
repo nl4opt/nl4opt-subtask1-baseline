@@ -95,7 +95,7 @@ There are many approaches to training a neural network. However, the baseline fr
 
 ### Evaluating the model on the dev set
 
-`python evaluate.py --test ../data/test/20220629-test.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 64 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
+`python evaluate.py --test ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 64 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
 
 ## Results
 
