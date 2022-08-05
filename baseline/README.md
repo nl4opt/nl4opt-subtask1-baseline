@@ -17,7 +17,7 @@ The current repository is empty and all relevant baseline scripts will be releas
 Create a conda environment for the NER task and install the required packages:
 `conda create --name nl4opt-ner python=3.9.12`
 `conda activate nl4opt-ner`
-`cd nl4opt-competition/ner_task/baseline`
+`cd nl4opt-competition/baseline`
 `pip install -r requirements.txt`
 
 ## Overview for Running the code for the NL4Opt Baseline
@@ -112,8 +112,6 @@ The model was evaluated on researved samples from the same domain as those relea
 ## License
 
 The code under this repository is licensed under the Apache 2.0 License found in this repository.
-
-
 
 # Extending and Modifying the Code
 
