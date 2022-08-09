@@ -4,7 +4,6 @@ import time
 from tkinter import E
 
 import torch
-from pytorch_lightning import seed_everything
 
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
@@ -133,7 +132,6 @@ def get_modelcheckpoint_callback(out_dir, model_name, timestamp):
 
 
 def get_trainer(gpus=4, is_test=False, out_dir=None, epochs=10, model_name='', timestamp='', grad_accum=1):
-    seed_everything(42)
     logger = pl.loggers.CSVLogger(out_dir, name="lightning_logs")
     if is_test:
         return pl.Trainer(gpus=1, logger=logger) if torch.cuda.is_available() else pl.Trainer(val_check_interval=100)

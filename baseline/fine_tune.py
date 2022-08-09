@@ -2,6 +2,9 @@ import time
 
 from utils.utils import get_reader, train_model, parse_args, get_tagset, load_model
 
+from pytorch_lightning import seed_everything
+seed_everything(42)
+
 if __name__ == '__main__':
     timestamp = time.time()
     sg = parse_args()
