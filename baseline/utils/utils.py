@@ -24,7 +24,7 @@ def parse_args():
     p.add_argument('--iob_tagging', type=str, help='IOB tagging scheme', default='conll')
 
     p.add_argument('--max_instances', type=int, help='Maximum number of instances', default=1500)
-    p.add_argument('--max_length', type=int, help='Maximum number of tokens per instance.', default=100)
+    p.add_argument('--max_length', type=int, help='Maximum number of tokens per instance.', default=200)
 
     p.add_argument('--encoder_model', type=str, help='Pretrained encoder model to use', default='xlm-roberta-large')
     p.add_argument('--model', type=str, help='Model path.', default=None)
