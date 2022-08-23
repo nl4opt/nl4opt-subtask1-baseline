@@ -87,27 +87,27 @@ There are many approaches to training a neural network. However, the baseline fr
 
 ### Training the model
 
-`python train_model.py --train ../data/train/train.txt --dev ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 25 --encoder_model xlm-roberta-base --batch_size 64 --lr 0.0001`
+`python train_model.py --train ../data/train/train.txt --dev ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 25 --encoder_model xlm-roberta-base --batch_size 16 --lr 0.0001`
 
 ### Fine-tuning the model
 
-`python fine_tune.py --train ../data/train/train.txt --dev ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 30 --encoder_model xlm-roberta-base --batch_size 64 --lr 0.0001 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_0`
+`python fine_tune.py --train ../data/train/train.txt --dev ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --epochs 30 --encoder_model xlm-roberta-base --batch_size 16 --lr 0.0001 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_0`
 
 ### Evaluating the model on the dev set
 
-`python evaluate.py --test ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 64 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
+`python evaluate.py --test ../data/dev/dev.txt --out_dir ./trained_model --model_name xlmr_lr_0.0001 --gpus 1 --encoder_model xlm-roberta-base --batch_size 16 --model ./trained_model/xlmr_lr_0.0001/lightning_logs/version_1`
 
 ## Results
 
-*When evaluating the baseline on the dev set, you should get a micro-averaged F1 score of 0.886.*
+*When evaluating the baseline on the dev set, you should get a micro-averaged F1 score of 0.899.*
 
-The model was evaluated on reserved samples from the same domain as those released as part of the "training split" ("Source Domain"). The model was then evaluated on the reserved three new domains containing transportation, production, and science problems ("Target Domain"). Finally, the model was evaluated on the entire test set made up of all reserved sampled described above ("Entire Test Set"). The leaderboard and final standings will only consider the micro-averaged F1 score (right-most column) of the submitted models on the entire test set. The baseline model achieved **micro-averaged F1 score of 0.889**. This model achieved the following F1 scores:
+The model was evaluated on researved samples from the same domain as those released as part of the "training split" ("Source Domain"). The model was then evaluated on the reserved three new domains containing transportation, production, and science problems ("Target Domain"). Finally, the model was evaluated on the entire test set made up of all reserved sampled described above ("Entire Test Set"). The leaderboard and final standings will only consider the micro-averaged F1 score (right-most column) of the submitted models on the entire test set. The baseline model achieved **micro-averaged F1 score of 0.906**. This model achieved the following F1 scores:
 
 |                         | CONST  <br>DIR | LIMIT | OBJ  <br>DIR | OBJ  <br>NAME | PARAM | VAR   | MICRO  <br>AVG |
 | ----------------------- | -------------- | ----- | ------------ | ------------- | ----- | ----- | -------------- |
-| **Source Domain<br>**   | 0.858          | 0.867 | 1.000        | 0.903         | 0.949 | 0.903 | 0.906          |
-| **Target Domain<br>**   | 0.828          | 0.922 | 0.877        | 0.045         | 0.906 | 0.850 | 0.816          |
-| **Entire Test Set<br>** | 0.880          | 0.950 | 0.947        | 0.362         | 0.972 | 0.915 | 0.889*         |
+| **Source Domain<br>**   | 0.926          | 0.992 | 0.993        | 0.969         | 0.991 | 0.951 | 0.968          |
+| **Target Domain<br>**   | 0.936          | 0.992 | 0.993        | 0.420         | 0.968 | 0.910 | 0.883          |
+| **Entire Test Set<br>** | 0.944          | 0.002 | 0.993        | 0.591         | 0.975 | 0.920 | 0.906*         |
 
 \* Value that will be reported on the leaderboards page and used for the final evaluation when determining the winners.
 
