@@ -107,7 +107,7 @@ The model was evaluated on researved samples from the same domain as those relea
 | ----------------------- | -------------- | ----- | ------------ | ------------- | ----- | ----- | -------------- |
 | **Source Domain<br>**   | 0.926          | 0.992 | 0.993        | 0.969         | 0.991 | 0.951 | 0.968          |
 | **Target Domain<br>**   | 0.936          | 0.992 | 0.993        | 0.420         | 0.968 | 0.910 | 0.883          |
-| **Entire Test Set<br>** | 0.944          | 0.002 | 0.993        | 0.591         | 0.975 | 0.920 | 0.906*         |
+| **Entire Test Set<br>** | 0.934          | 0.992 | 0.993        | 0.591         | 0.975 | 0.920 | 0.906*         |
 
 \* Value that will be reported on the leaderboards page and used for the final evaluation when determining the winners.
 
